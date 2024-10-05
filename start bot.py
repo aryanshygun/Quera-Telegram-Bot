@@ -19,7 +19,6 @@ Greetings! Here are the commands you can use with this bot:
 Feel free to utilize any of these commands as needed. If you require further assistance, don't hesitate to ask. Farewell for now!
 """
 
-
 async def start_command_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
