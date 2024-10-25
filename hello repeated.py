@@ -25,40 +25,78 @@ def delete_facts_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE):
         job.schedule_removal()
     return True
 
+# async def facts_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     try:
+#         a = int(context.args[0])
+#         if a < 5:
+#             await context.bot.send_message(
+#                 chat_id=update.effective_chat.id,
+#                 text="please enter a number greater than 5"
+#             )
+#             return
+#         job_name = str(update.effective_user.id)
+#         job_exists = delete_facts_job_if_exists(job_name, context)
+#         if job_exists:
+#             context.job_queue.run_repeating(
+#                 job_facts_handler,
+#                 interval=a,
+#                 chat_id=update.effective_chat.id,
+#                 name=job_name
+#             )
+#             await context.bot.send_message(
+#                 chat_id=update.effective_chat.id,
+#                 text="your previous job were delete and you will receive a fact every {} seconds".format(a)
+#                 )
+#         else:
+#             context.job_queue.run_repeating(
+#                 job_facts_handler,
+#                 interval=a,
+#                 chat_id=update.effective_chat.id,
+#                 name=job_name
+#             )
+#             await context.bot.send_message(
+#                 chat_id=update.effective_chat.id,
+#                 text="you will receive a fact every {} seconds".format(a)
+#                 )
+#     except (IndexError, ValueError):
+#         await context.bot.send_message(
+#             chat_id=update.effective_chat.id,
+#             text="please enter a number greater than 10 not anything else"
+#             )
+
 async def facts_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        a = int(context.args[0])
-        if a < 5:
-            await context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text="please enter a number greater than 5"
+    a = int(context.args[0])
+    if a < 5:
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="please enter a number greater than 5"
+        )
+        return
+    job_name = str(update.effective_user.id)
+    job_exists = delete_facts_job_if_exists(job_name, context)
+    if job_exists:
+        context.job_queue.run_repeating(
+            job_facts_handler,
+            interval=a,
+            chat_id=update.effective_chat.id,
+            name=job_name
+        )
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="your previous job were delete and you will receive a fact every {} seconds".format(a)
             )
-            return
-        job_name = str(update.effective_user.id)
-        job_exists = delete_facts_job_if_exists(job_name, context)
-        if job_exists:
-            context.job_queue.run_repeating(
-                job_facts_handler,
-                interval=a,
-                chat_id=update.effective_chat.id,
-                name=job_name
+    else:
+        context.job_queue.run_repeating(
+            job_facts_handler,
+            interval=a,
+            chat_id=update.effective_chat.id,
+            name=job_name
+        )
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="you will receive a fact every {} seconds".format(a)
             )
-            await context.bot.send_message(chat_id=update.effective_chat.id,
-                                           text="your previous job were delete and you will receive a fact every {} seconds".format(
-                                               a))
-        else:
-            context.job_queue.run_repeating(
-                job_facts_handler,
-                interval=a,
-                chat_id=update.effective_chat.id,
-                name=job_name
-            )
-            await context.bot.send_message(chat_id=update.effective_chat.id,
-                                           text="you will receive a fact every {} seconds".format(
-                                               a))
-    except (IndexError, ValueError):
-        await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text="please enter a number greater than 10 not anything else")
+
 
 async def unset_facts_job_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     jobs = context.job_queue.get_jobs_by_name(str(update.effective_user.id))
